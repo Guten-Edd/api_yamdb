@@ -7,7 +7,7 @@ from .serializers import GenreSerializer
 
 class GenreViewSet(ListCreateDeleteViewSet):
     """
-    Получить список всех жанров. Права доступа: Доступно без токена
+    Получить список всех жанров. Права доступа: Доступно без токена.
     """
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer

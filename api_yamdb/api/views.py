@@ -3,13 +3,11 @@ from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 
 from reviews.models import Review, Title
-from .permissions import IsAdminOrModeratirOrAuthorOrReadOnly
 from .serializers import ReviewSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
     """Вьюсет для отзывов."""
-    permission_classes = [IsAdminOrModeratirOrAuthorOrReadOnly, ]
     pagination_class = PageNumberPagination
     serializer_class = ReviewSerializer
 

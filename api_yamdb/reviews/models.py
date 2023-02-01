@@ -3,12 +3,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
-User = get_user_model()  # ЗАГЛУШКА
-
-
-class Title(models.Model):
-    """Модель произведение - ЗАГЛУШКА"""
-    pass
+User = get_user_model()
 
 
 class Review(models.Model):

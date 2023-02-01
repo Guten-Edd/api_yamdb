@@ -24,7 +24,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'reviews.apps.ReviewsConfig',
     'api.apps.ApiConfig',
-    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -105,3 +104,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5
+}

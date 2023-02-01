@@ -1,7 +1,14 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from reviews.models import Review, Title
+from reviews.models import Genre, Review, Title
+
+
+class GenreSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Genre
+        fields = ('name', 'slug')
 
 
 class ReviewSerializer(serializers.ModelSerializer):

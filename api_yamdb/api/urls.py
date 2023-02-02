@@ -13,7 +13,8 @@ router_v1.register(
     ReviewViewSet,
     basename='reviews'
 )
-v1_router.register(
+
+router_v1.register(
     'genres',
     GenreViewSet,
     basename='genres'

@@ -1,14 +1,23 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter
-from reviews.models import Genre
+from rest_framework.pagination import PageNumberPagination
+from reviews.models import Category, Genre, Review, Title
 
 from .mixins import ListCreateDeleteViewSet
-from .serializers import GenreSerializer
+from .serializers import CategorySerializer, GenreSerializer, ReviewSerializer
 
-from reviews.models import Review, Title
-from .serializers import ReviewSerializer
+
+class CategoryViewSet(ListCreateDeleteViewSet):
+    """
+    Получить список всех категорий Права доступа: Доступно без токена.
+    """
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    pagination_class = PageNumberPagination
+    filter_backends = (SearchFilter,)
+    search_fields = ('name', )
+    lookup_field = 'slug'
 
 
 class GenreViewSet(ListCreateDeleteViewSet):
@@ -17,6 +26,7 @@ class GenreViewSet(ListCreateDeleteViewSet):
     """
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    pagination_class = PageNumberPagination
     filter_backends = (SearchFilter,)
     search_fields = ('name', )
     lookup_field = 'slug'

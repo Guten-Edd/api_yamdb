@@ -28,7 +28,6 @@ class GenreAdmin(admin.ModelAdmin):
 @admin.register(Title)
 class TitleAdmin(admin.ModelAdmin):
     list_display = (
-        'id',
         'name',
         'year',
         'description',

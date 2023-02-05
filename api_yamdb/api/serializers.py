@@ -1,7 +1,69 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from reviews.models import Category, Comment, Genre, Review, Title
+from users.models import User
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для пользователя.
+    """
+    class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'bio', 'role'
+        )
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'Имя пользователя не может быть "me"'
+            )
+        return value
+
+
+class UserSignUpSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для регистрации нового пользователя.
+    """
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'Имя пользователя не может быть "me"'
+            )
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError(
+                'Имя пользователя уже существует'
+            )
+        return value
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(
+                'Пользователь с этим адресом электронной почты уже существует'
+            )
+        return value
+
+
+class TokenCreateSerializer(serializers.Serializer):
+    """
+    Сериализатор для создания токена.
+    """
+    username = serializers.CharField(max_length=150)
+    confirmation_code = serializers.CharField(max_length=256)
+
+    def validate_token(self, data):
+        user = get_object_or_404(User, username=data['username'])
+        if user.confirmation_code != data['confirmation_code']:
+            raise serializers.ValidationError('Неверный код подтверждения')
+        return RefreshToken.for_user(user).access_token
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -46,7 +108,9 @@ class TitlePostSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    """Сериалайзер для отзывов. Валидирует оценку и уникальность."""
+    """
+    Сериализатор для отзывов. Валидирует оценку и уникальность.
+    """
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True
@@ -79,7 +143,9 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    """Сериалайзер для комментов."""
+    """
+    Сериалайзер для комментов.
+    """
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True

@@ -88,8 +88,8 @@ class Title(models.Model):
 
 class Review(models.Model):
     """
-    Модель Ревью - отзыв, Связвна с моделью Title(самим произведением).
-    Юзер может сделать только одну оценку для конкретного произведения.
+    Модель Review - отзыв, Связана с моделью Title (самим произведением).
+    Пользователь может сделать только одну оценку для конкретного произведения.
     """
     title = models.ForeignKey(
         Title,
@@ -117,6 +117,7 @@ class Review(models.Model):
     )
 
     class Meta:
+        ordering = ['-pub_date']
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
         constraints = [
@@ -153,6 +154,7 @@ class Comment(models.Model):
     )
 
     class Meta:
+        ordering = ['-pub_date']
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 

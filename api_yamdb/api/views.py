@@ -8,7 +8,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, views, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework.pagination import (
+    LimitOffsetPagination,
+    PageNumberPagination
+)
 from rest_framework.permissions import (
     AllowAny,
     IsAuthenticated,
@@ -20,7 +23,11 @@ from users.models import User
 
 from .filters import FilterTitle
 from .mixins import ListCreateDeleteViewSet
-from .permissions import AdminOrReadOnly, AdminOrSuperuserOnly, AuthenticatedOrReadOnly
+from .permissions import (
+    AdminOrReadOnly,
+    AdminOrSuperuserOnly,
+    AuthenticatedOrReadOnly
+)
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
@@ -42,7 +49,7 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
     serializer_class = UserSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
-    permission_classes = (IsAuthenticated, AdminOrSuperuserOnly,)
+    permission_classes = (IsAuthenticated, AdminOrSuperuserOnly, )
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
@@ -52,7 +59,7 @@ class UserViewSet(viewsets.ModelViewSet):
         methods=['get', 'patch'],
         url_path='me',
         url_name='me',
-        permission_classes=(IsAuthenticated,)
+        permission_classes=(IsAuthenticated, )
     )
     def me(self, request):
         user = self.request.user
@@ -79,7 +86,7 @@ class UserSignUpViewSet(views.APIView):
             return Response(request.data, status=HTTPStatus.OK)
         serializer = UserSignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        confirmation_code = get_random_string()
+        confirmation_code = get_random_string(length=256)
         serializer.save(confirmation_code=confirmation_code)
         send_mail(
             'Confirmation code for Yamdb',
@@ -138,7 +145,7 @@ class CategoryViewSet(ListCreateDeleteViewSet):
     filter_backends = (SearchFilter,)
     search_fields = ('name', )
     lookup_field = 'slug'
-    permission_classes = [AdminOrReadOnly, ]
+    permission_classes = (AdminOrReadOnly, )
 
 
 class GenreViewSet(ListCreateDeleteViewSet):
@@ -149,7 +156,7 @@ class GenreViewSet(ListCreateDeleteViewSet):
     """
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (AdminOrReadOnly,)
+    permission_classes = (AdminOrReadOnly, )
     pagination_class = PageNumberPagination
     filter_backends = (SearchFilter,)
     search_fields = ('name', )
@@ -164,12 +171,12 @@ class TitleViewSet(viewsets.ModelViewSet):
     Частичное обновление информации о произведении.ПД: Администратор
     Удаление произведения. Права доступа: Администратор.
     """
-    pagination_class = PageNumberPagination
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = FilterTitle
     search_fields = ('name', 'year', 'genre__slug', 'category__slug')
-    permission_classes = [AdminOrReadOnly, ]
+    permission_classes = (AdminOrReadOnly, )
+    pagination_class = PageNumberPagination
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -186,7 +193,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     """
     pagination_class = PageNumberPagination
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, AuthenticatedOrReadOnly]
+    permission_classes = (IsAuthenticatedOrReadOnly, AuthenticatedOrReadOnly, )
 
     def get_title(self):
         return get_object_or_404(Title, id=self.kwargs.get('title_id'))
@@ -200,7 +207,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(ReviewViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [AuthenticatedOrReadOnly, ]
+    permission_classes = (AuthenticatedOrReadOnly, )
 
     def get_review(self):
         return get_object_or_404(Review, id=self.kwargs.get('review_id'))

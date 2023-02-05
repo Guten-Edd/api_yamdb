@@ -55,6 +55,9 @@ class User(AbstractUser):
         null=True
     )
 
+    class Meta:
+        ordering = ['-date_joined']
+
     @property
     def is_admin(self):
         return self.role == 'admin'

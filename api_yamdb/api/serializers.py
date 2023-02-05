@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from reviews.models import Genre, Review, Title
+from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
 
@@ -66,21 +66,51 @@ class TokenCreateSerializer(serializers.Serializer):
         return RefreshToken.for_user(user).access_token
 
 
+class CategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = ('name', 'slug')
+        lookup_field = 'slug'
+
+
 class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
         fields = ('name', 'slug')
+        lookup_field = 'slug'
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    genre = GenreSerializer(many=True, read_only=True)
+    rating = serializers.FloatField()
+
+    class Meta:
+        model = Title
+        fields = ('id', 'name', 'year', 'description', 'rating',
+                  'category', 'genre')
+
+
+class TitlePostSerializer(serializers.ModelSerializer):
+    category = serializers.SlugRelatedField(
+        slug_field='slug', queryset=Category.objects.all()
+    )
+    genre = serializers.SlugRelatedField(
+        slug_field='slug', queryset=Genre.objects.all(),
+        many=True
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Title
 
 
 class ReviewSerializer(serializers.ModelSerializer):
     """
     Сериализатор для отзывов. Валидирует оценку и уникальность.
     """
-    title = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True
@@ -109,4 +139,18 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = ['id', 'text', 'author', 'score', 'pub_date']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """
+    Сериалайзер для комментов.
+    """
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True
+    )
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'text', 'author', 'pub_date']

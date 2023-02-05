@@ -1,34 +1,37 @@
 from http import HTTPStatus
+
 from django.core.mail import send_mail
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
-from django.db.models import Avg
-
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, views, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.pagination import (PageNumberPagination,
-                                       LimitOffsetPagination)
-from rest_framework.permissions import (AllowAny, IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
 from rest_framework.response import Response
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
 from .filters import FilterTitle
 from .mixins import ListCreateDeleteViewSet
-from .permissions import (AdminOrSuperuserOnly, AdminOrReadOnly,
-                          AuthenticatedOrReadOnly)
-from .serializers import (CategorySerializer,
-                          CommentSerializer,
-                          GenreSerializer,
-                          ReviewSerializer,
-                          UserSerializer,
-                          UserSignUpSerializer,
-                          TokenCreateSerializer,
-                          TitlePostSerializer,
-                          TitleSerializer,
-                          )
+from .permissions import AdminOrReadOnly, AdminOrSuperuserOnly, AuthenticatedOrReadOnly
+from .serializers import (
+    CategorySerializer,
+    CommentSerializer,
+    GenreSerializer,
+    ReviewSerializer,
+    TitlePostSerializer,
+    TitleSerializer,
+    TokenCreateSerializer,
+    UserSerializer,
+    UserSignUpSerializer,
+)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -135,7 +138,7 @@ class CategoryViewSet(ListCreateDeleteViewSet):
     filter_backends = (SearchFilter,)
     search_fields = ('name', )
     lookup_field = 'slug'
-    permission_classes = [AdminOrReadOnly,]
+    permission_classes = [AdminOrReadOnly, ]
 
 
 class GenreViewSet(ListCreateDeleteViewSet):
@@ -163,10 +166,10 @@ class TitleViewSet(viewsets.ModelViewSet):
     """
     pagination_class = PageNumberPagination
     serializer_class = TitleSerializer
-    filter_backends = (SearchFilter,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = FilterTitle
     search_fields = ('name', 'year', 'genre__slug', 'category__slug')
-    permission_classes = [AdminOrReadOnly,]
+    permission_classes = [AdminOrReadOnly, ]
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -197,7 +200,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(ReviewViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [AuthenticatedOrReadOnly,]
+    permission_classes = [AuthenticatedOrReadOnly, ]
 
     def get_review(self):
         return get_object_or_404(Review, id=self.kwargs.get('review_id'))

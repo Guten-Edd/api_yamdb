@@ -65,7 +65,7 @@ python manage.py migrate
 Выполнить загрузку информации в базу данных:
 
 ```
-python manage.py import_database
+python manage.py csv_import
 ```
 
 Запустить проект:
@@ -73,10 +73,17 @@ python manage.py import_database
 ```
 python manage.py runserver
 ```
-### Авторы:
-[Эдуард Соловьёв]()
 
-[Елена Посохова]()
+Документация доступна по адресу:
+
+```
+http://127.0.0.1:8000/redoc/
+```
+
+### Авторы:
+[Эдуард Соловьев](https://github.com/Guten-Edd)
+
+[Елена Посохова](https://github.com/Elenka-Posohova)
 
 [Иван Филиппов](https://www.linkedin.com/in/iffilippov/)
 

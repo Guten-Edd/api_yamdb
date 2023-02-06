@@ -4,7 +4,6 @@ from django.db import models
 
 from .validators import validate_year
 
-
 User = get_user_model()
 
 

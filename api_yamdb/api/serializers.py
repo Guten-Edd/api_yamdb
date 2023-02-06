@@ -67,6 +67,9 @@ class TokenCreateSerializer(serializers.Serializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для категорий.
+    """
 
     class Meta:
         model = Category
@@ -75,6 +78,9 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для жанров.
+    """
 
     class Meta:
         model = Genre
@@ -83,6 +89,9 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для GET запросов произведений.
+    """
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(many=True, read_only=True)
     rating = serializers.FloatField()
@@ -94,6 +103,9 @@ class TitleSerializer(serializers.ModelSerializer):
 
 
 class TitlePostSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для POST запросов произведений.
+    """
     category = serializers.SlugRelatedField(
         slug_field='slug', queryset=Category.objects.all()
     )

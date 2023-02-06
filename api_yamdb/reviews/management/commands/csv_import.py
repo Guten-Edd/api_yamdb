@@ -16,7 +16,12 @@ TABLES = {
 
 
 class Command(BaseCommand):
-
+    """
+    Запуск произвести командой python manage.py csv_import
+    Заполнить базу можно только один раз, при повторном заполнении
+    появится ошибка.
+    Для удаления БД можно просто удалить файл db.sqlite3
+    """
     def handle(self, *args, **kwargs):
         for model, csv_f in TABLES.items():
             with open(

@@ -12,11 +12,7 @@ class AdminOrReadOnly(BasePermission):
 
 
 class AdminOrSuperUserOnly(BasePermission):
-    def has_permission(self, request, view):
-        ''' Вариант работы с PUT-запросом, который не проходит pytest.
-            Код ошибки 403 вместо 405
-        if request.method == 'PUT':
-            return False'''
+    def has_permission(self, request, view):        
         return (
             request.user.role == 'admin'
             or request.user.is_superuser

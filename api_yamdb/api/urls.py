@@ -7,6 +7,7 @@ from .views import (CategoryViewSet, CommentViewSet,
 
 app_name = 'api'
 
+
 class NoPutRouter(DefaultRouter):
     """
     Кастомный роутер без 'PUT'.
@@ -16,6 +17,7 @@ class NoPutRouter(DefaultRouter):
         if 'put' in allowed_methods.keys():
             del allowed_methods['put']
         return allowed_methods
+
 
 router_v1 = NoPutRouter()
 

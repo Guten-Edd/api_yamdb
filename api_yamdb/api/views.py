@@ -25,7 +25,7 @@ from .filters import FilterTitle
 from .mixins import ListCreateDeleteViewSet
 from .permissions import (
     AdminOrReadOnly,
-    AdminOrSuperuserOnly,
+    AdminOrSuperUserOnly,
     AuthenticatedOrReadOnly
 )
 from .serializers import (
@@ -48,8 +48,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     lookup_field = 'username'
     serializer_class = UserSerializer
-    http_method_names = ['get', 'post', 'patch', 'delete']
-    permission_classes = (IsAuthenticated, AdminOrSuperuserOnly, )
+    permission_classes = (IsAuthenticated, AdminOrSuperUserOnly, )
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
@@ -109,28 +108,10 @@ class TokenCreateViewSet(views.APIView):
     def post(self, request):
         serializer = TokenCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        username = User.objects.filter(username=request.data.get('username'))
-        request_code = request.data.get('confirmation_code')
-        confirmation_code = User.objects.filter(
-            confirmation_code=request_code)
-        if User.objects.filter(username=request.data.get('username'),
-                               email=request.data.get('email')).exists():
-            return Response(
-                data={'access': str(serializer.validated_data)},
-                status=HTTPStatus.OK
-            )
-        elif (
-            username.exists() and confirmation_code != request_code
-        ):
-            return Response(
-                data={'access': str(serializer.validated_data)},
-                status=HTTPStatus.BAD_REQUEST
-            )
-        else:
-            return Response(
-                data={'access': str(serializer.validated_data)},
-                status=HTTPStatus.NOT_FOUND
-            )
+        return Response(
+            data={'access': str(serializer.validated_data)},
+            status=HTTPStatus.OK
+        )
 
 
 class CategoryViewSet(ListCreateDeleteViewSet):
@@ -206,7 +187,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, title=self.get_title())
 
 
-class CommentViewSet(ReviewViewSet):
+class CommentViewSet(viewsets.ModelViewSet):
     """
     Вьюсет для комментариев.
     """

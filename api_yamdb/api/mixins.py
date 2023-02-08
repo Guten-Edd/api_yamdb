@@ -13,4 +13,3 @@ class ListCreateDeleteViewSet(
     Создать объект (для обработки запросов POST);
     Удалить объект (для обработки запросов DELETE).
     """
-    pass

@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator, EmailValidator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -25,13 +26,29 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
 
-class UserSignUpSerializer(serializers.ModelSerializer):
+class UserSignUpSerializer(serializers.Serializer):
     """
     Сериализатор для регистрации нового пользователя.
     """
+    username = serializers.CharField(
+        max_length=150,
+        validators=[
+            RegexValidator(regex=r'^[\w.@+-]',
+                           message='Недопустимые символы в имени пользователя')
+        ]
+    )
+    email = serializers.CharField(
+        max_length=254,
+        validators=[
+            EmailValidator(message='Недопустимый email')
+        ]
+    )
+
     class Meta:
-        model = User
-        fields = ('username', 'email')
+        fields = '__all__'
+
+    def create(self, value):
+        return User.objects.create(**value)
 
     def validate_username(self, value):
         if value == 'me':
@@ -59,7 +76,7 @@ class TokenCreateSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
     confirmation_code = serializers.CharField(max_length=256)
 
-    def validate_token(self, data):
+    def validate(self, data):
         user = get_object_or_404(User, username=data['username'])
         if user.confirmation_code != data['confirmation_code']:
             raise serializers.ValidationError('Неверный код подтверждения')

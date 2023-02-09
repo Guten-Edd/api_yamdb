@@ -48,7 +48,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     lookup_field = 'username'
     serializer_class = UserSerializer
-    http_method_names = ['get', 'post', 'patch', 'delete']   
+    http_method_names = ['get', 'post', 'patch', 'delete']
     permission_classes = (IsAuthenticated, AdminOrSuperUserOnly, )
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
@@ -108,12 +108,11 @@ class TokenCreateViewSet(views.APIView):
 
     def post(self, request):
         serializer = TokenCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)        
-        # request_code = request.data.get('confirmation_code')        
+        serializer.is_valid(raise_exception=True)
         return Response(
-                data={'access': str(serializer.validated_data)},
-                status=HTTPStatus.OK
-            )        
+            data={'access': str(serializer.validated_data)},
+            status=HTTPStatus.OK
+        )
 
 
 class CategoryViewSet(ListCreateDeleteViewSet):

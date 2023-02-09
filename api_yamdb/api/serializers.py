@@ -45,12 +45,12 @@ class UserSignUpSerializer(serializers.Serializer):
     )
 
     class Meta:
-        fields = '__all__'        
+        fields = '__all__'
 
     def create(self, value):
         return User.objects.create(**value)
 
-    def validate_username(self, value):        
+    def validate_username(self, value):
         if value == 'me':
             raise serializers.ValidationError(
                 'Имя пользователя не может быть "me"'
@@ -61,7 +61,7 @@ class UserSignUpSerializer(serializers.Serializer):
             )
         return value
 
-    def validate_email(self, value):        
+    def validate_email(self, value):
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError(
                 'Пользователь с этим адресом электронной почты уже существует'

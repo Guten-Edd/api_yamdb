@@ -57,6 +57,16 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ['-date_joined']
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+    @property
+    def is_admin(self):
+        return self.role == User.ROLE[2][0]
+    
+    @property
+    def is_moderator(self):
+        return self.role == User.ROLE[1][0]
 
     def __str__(self):
         return self.username

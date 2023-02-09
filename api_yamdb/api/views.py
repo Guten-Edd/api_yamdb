@@ -47,7 +47,8 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     lookup_field = 'username'
-    serializer_class = UserSerializer    
+    serializer_class = UserSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']   
     permission_classes = (IsAuthenticated, AdminOrSuperUserOnly, )
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)

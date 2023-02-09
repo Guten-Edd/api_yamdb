@@ -7,17 +7,7 @@ from .views import (CategoryViewSet, CommentViewSet,
 
 app_name = 'api'
 
-class NoPutRouter(DefaultRouter):
-    """
-    Кастомный роутер без 'PUT'.
-    """
-    def get_method_map(self, viewset, method_map):
-        allowed_methods = super().get_method_map(viewset, method_map)
-        if 'put' in allowed_methods.keys():
-            del allowed_methods['put']
-        return allowed_methods
-
-router_v1 = NoPutRouter()
+router_v1 = DefaultRouter()
 
 router_v1.register(
     r"titles/(?P<title_id>\d+)/reviews",

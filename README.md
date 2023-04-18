@@ -41,7 +41,7 @@ cd api_yamdb
 Cоздать и активировать виртуальное окружение:
 
 ```
-python -3.7 -m venv env
+python -m venv venv
 ```
 
 ```
